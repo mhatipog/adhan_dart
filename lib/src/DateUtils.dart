@@ -1,12 +1,17 @@
 import 'package:adhan_dart/src/Rounding.dart';
 
-
 DateTime dateByAddingDays(DateTime date, int days) {
   final shifted = date.add(Duration(days: days));
   final expected = DateTime.utc(date.year, date.month, date.day + days,
       date.hour, date.minute, date.second, date.millisecond, date.microsecond);
-  final actual = DateTime.utc(shifted.year, shifted.month, shifted.day,
-      shifted.hour, shifted.minute, shifted.second, shifted.millisecond,
+  final actual = DateTime.utc(
+      shifted.year,
+      shifted.month,
+      shifted.day,
+      shifted.hour,
+      shifted.minute,
+      shifted.second,
+      shifted.millisecond,
       shifted.microsecond);
   return shifted.add(expected.difference(actual));
 }
