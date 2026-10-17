@@ -22,6 +22,18 @@ jobs:
       - name: Format only PR-changed Dart files
         run: |
           dart format lib/src/DateUtils.dart lib/src/PrayerTimes.dart lib/src/PolarCircleResolution.dart test/date_utils_dst_test.dart
+
+      - name: Inspect baseline formatting on fork master
+        run: |
+          git fetch origin master
+          git worktree add /tmp/adhan-dart-baseline origin/master
+          cd /tmp/adhan-dart-baseline
+          dart pub get
+          set +e
+          dart format --set-exit-if-changed .
+          status=$?
+          set -e
+          echo "BASELINE_FORMAT_EXIT_CODE=$status"
       - name: Save formatted source to validation branch only
         run: |
           git config user.name "github-actions[bot]"
