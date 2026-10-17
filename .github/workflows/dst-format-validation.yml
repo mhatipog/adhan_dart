@@ -1,0 +1,33 @@
+name: Format changed Dart files (fork validation only)
+
+on:
+  push:
+    branches: [ci/dst-format-validation]
+
+permissions:
+  contents: write
+
+jobs:
+  format-changed:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: ci/dst-format-validation
+      - uses: dart-lang/setup-dart@v1
+        with:
+          sdk: '3.13.5'
+      - name: Install dependencies
+        run: dart pub get
+      - name: Format only PR-changed Dart files
+        run: |
+          dart format lib/src/DateUtils.dart lib/src/PrayerTimes.dart lib/src/PolarCircleResolution.dart test/date_utils_dst_test.dart
+      - name: Save formatted source to validation branch only
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add lib/src/DateUtils.dart lib/src/PrayerTimes.dart lib/src/PolarCircleResolution.dart test/date_utils_dst_test.dart
+          if ! git diff --cached --quiet; then
+            git commit -m "chore: generate formatter output for original PR files"
+            git push origin HEAD:ci/dst-format-validation
+          fi
